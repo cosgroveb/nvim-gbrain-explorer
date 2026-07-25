@@ -1,4 +1,5 @@
 local buffer = require "gbrain-explorer.buffer"
+local entry_format = require "gbrain-explorer.entry"
 
 local M = {}
 
@@ -9,9 +10,7 @@ local function notify(message, level)
 end
 
 local function entry_line(entry)
-  local kind = entry.type and (" [" .. entry.type .. "]") or ""
-  local title = entry.title and entry.title ~= "" and (" " .. entry.title) or ""
-  return entry.slug .. kind .. title
+  return entry_format.text(entry)
 end
 
 local function current_entry(bufnr)

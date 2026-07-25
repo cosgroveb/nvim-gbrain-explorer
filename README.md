@@ -35,6 +35,11 @@ With [lazy.nvim](https://github.com/folke/lazy.nvim):
       "<cmd>GBrainExplorer<cr>",
       desc = "Browse GBrain pages",
     },
+    {
+      "<leader>gbs",
+      "<cmd>GBrainSearch<cr>",
+      desc = "Search GBrain pages",
+    },
   },
   opts = {
     endpoint = "https://gbrain.example.com/mcp",
@@ -79,6 +84,9 @@ soft-deletes pages for 72 hours.
 
 Recent browsing follows GBrain's 100-page server limit. Use
 `:GBrainSearch` to find older pages.
+
+Result rows put the title first. Telescope can fuzzy-match the title, type, or
+slug.
 
 ## Configure
 

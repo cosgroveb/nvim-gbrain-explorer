@@ -3,6 +3,8 @@ return function(t)
   local client = require "gbrain-explorer.client"
   local config_module = require "gbrain-explorer.config"
   local document = require "gbrain-explorer.document"
+  local entry = require "gbrain-explorer.entry"
+  local picker = require "gbrain-explorer.picker"
 
   local function response(body, status, content_type, session)
     return table.concat({
@@ -27,6 +29,52 @@ return function(t)
         endpoint = "https://gbrain.example.com/mcp",
       }).endpoint
     )
+  end)
+
+  t.test("entry text puts nonempty titles first", function()
+    t.equal(
+      "Useful title [concept] - pages/long-slug",
+      entry.text {
+        slug = "pages/long-slug",
+        type = "concept",
+        title = "Useful title",
+      }
+    )
+    t.equal(
+      "pages/no-title [concept]",
+      entry.text {
+        slug = "pages/no-title",
+        type = "concept",
+      }
+    )
+    t.equal(
+      "pages/empty-title [concept]",
+      entry.text {
+        slug = "pages/empty-title",
+        type = "concept",
+        title = "",
+      }
+    )
+    t.equal(
+      "Useful title - pages/no-type",
+      entry.text {
+        slug = "pages/no-type",
+        title = "Useful title",
+      }
+    )
+  end)
+
+  t.test("picker entries share display and fuzzy text", function()
+    local value = {
+      slug = "pages/example",
+      type = "concept",
+      title = "Example",
+    }
+    local result = picker.make_entry(value)
+
+    t.equal("Example [concept] - pages/example", result.display)
+    t.equal(result.display, result.ordinal)
+    t.equal(value, result.value)
   end)
 
   t.test("transport decodes JSON and selects the matching response ID", function()

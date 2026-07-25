@@ -1,9 +1,7 @@
 local M = {}
 
 function M.make_entry(entry)
-  local kind = entry.type and (" [" .. entry.type .. "]") or ""
-  local title = entry.title and entry.title ~= "" and (" " .. entry.title) or ""
-  local display = entry.slug .. kind .. title
+  local display = require("gbrain-explorer.entry").text(entry)
   return {
     display = display,
     ordinal = display,

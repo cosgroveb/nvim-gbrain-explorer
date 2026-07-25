@@ -144,8 +144,8 @@ return function(t)
     local bufnr = explorer.open_fallback(fake_client(), view)
 
     t.equal({
-      "pages/one [project] One",
-      "references/two [reference] Two",
+      "One [project] - pages/one",
+      "Two [reference] - references/two",
     }, vim.api.nvim_buf_get_lines(bufnr, 0, -1, false))
     explorer.refresh_fallback(bufnr)
     t.equal(2, loads)
@@ -265,5 +265,58 @@ return function(t)
     vim.cmd "GBrainSearch exact phrase"
     t.equal({ { query = "exact phrase", limit = 7 } }, searches)
     wipe(vim.api.nvim_get_current_buf())
+  end)
+
+  t.test("argument-free search prompts and submits the query", function()
+    local prompted
+    local searches = {}
+    local instance = fake_client {
+      search = function(_, query, options, callback)
+        table.insert(searches, { query = query, limit = options.limit })
+        callback {}
+      end,
+    }
+    require("gbrain-explorer")._set_state_for_test(instance, {
+      ui_mode = "buffer",
+      search_limit = 7,
+    })
+
+    with_override(vim.ui, "input", function(options, callback)
+      prompted = options.prompt
+      callback "  project metadata  "
+    end, function()
+      vim.cmd "GBrainSearch"
+    end)
+
+    t.equal("Search GBrain: ", prompted)
+    t.equal({ { query = "project metadata", limit = 7 } }, searches)
+    wipe(vim.api.nvim_get_current_buf())
+  end)
+
+  t.test("cancelled and blank prompted searches do nothing", function()
+    local searches = {}
+    local instance = fake_client {
+      search = function(_, query, options, callback)
+        table.insert(searches, { query = query, limit = options.limit })
+        callback {}
+      end,
+    }
+    require("gbrain-explorer")._set_state_for_test(instance, {
+      ui_mode = "buffer",
+      search_limit = 7,
+    })
+
+    with_override(vim.ui, "input", function(_, callback)
+      callback(nil)
+    end, function()
+      vim.cmd "GBrainSearch"
+    end)
+    with_override(vim.ui, "input", function(_, callback)
+      callback "   "
+    end, function()
+      vim.cmd "GBrainSearch"
+    end)
+
+    t.equal({}, searches)
   end)
 end
