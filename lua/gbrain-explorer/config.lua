@@ -3,7 +3,7 @@ local M = {}
 M.defaults = {
   token_env = "GBRAIN_REMOTE_TOKEN",
   ui_mode = "auto",
-  timeout_ms = 10000,
+  timeout_ms = 30000,
   page_limit = 100,
   search_limit = 50,
 }

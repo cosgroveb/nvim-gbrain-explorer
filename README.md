@@ -97,7 +97,7 @@ require("gbrain-explorer").setup({
   endpoint = "https://gbrain.example.com/mcp",
   token_env = "GBRAIN_REMOTE_TOKEN",
   ui_mode = "auto", -- "auto", "telescope", or "buffer"
-  timeout_ms = 10000,
+  timeout_ms = 30000,
   page_limit = 100,
   search_limit = 50,
 })
